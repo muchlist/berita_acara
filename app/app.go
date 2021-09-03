@@ -12,12 +12,12 @@ import (
 )
 
 func RunApp(){
-	// Init config, logger and db
+	// Init config, logger dan db
 	configs.Init()
 	logger.Init()
 	db.Init()
 
-	// create fiber app
+	// membuat fiber app
 	app := fiber.New()
 
 	// gracefully shutdown
@@ -37,7 +37,7 @@ func RunApp(){
 		log.Panic()
 	}
 
-	// cleaning up app, ex db close and etc
+	// cleanup app, seperti menutup koneksi database dll
 	fmt.Println("Running cleanup tasks...")
 	db.Close()
 }
