@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/muchlist/berita_acara/configs"
+	"github.com/muchlist/berita_acara/utils/logger"
 )
 
 var (
@@ -12,21 +13,24 @@ var (
 )
 
 // Init menginisiasi database pool
-// responsenya digunakan untuk memutus koneksi apabila main program dihentikan
-func Init() *pgxpool.Pool {
+func Init() {
 	cfg := configs.Config
 
 	// databaseUrl := "postgres://username:password@localhost:5432/database_name"
 	databaseUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
-		cfg.DBUSER, cfg.DBPASS, cfg.DBHOST, cfg.DBHOST, cfg.DBNAME)
+		cfg.DBUSER, cfg.DBPASS, cfg.DBHOST, cfg.DBPORT, cfg.DBNAME)
 
 	var err error
 	DB, err = pgxpool.Connect(context.Background(), databaseUrl)
 	if err != nil {
+		logger.Error("tidak dapat terhubung ke database", err)
 		panic(fmt.Sprintf("Unable to connect to database: %v\n", err))
 	}
 
-	fmt.Println("Connected!")
+	logger.Info("terkoneksi ke database")
+}
 
-	return DB
+func Close(){
+	DB.Close()
+	logger.Info("koneksi ke database ditutup")
 }

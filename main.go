@@ -1,14 +1,9 @@
 package main
 
 import (
-	"github.com/muchlist/berita_acara/configs"
-	"github.com/muchlist/berita_acara/db"
-	"github.com/muchlist/berita_acara/utils/logger"
+	"github.com/muchlist/berita_acara/app"
 )
 
 func main() {
-	// Init config, logger and db
-	configs.Init()
-	logger.Init()
-	db.Init()
+	app.RunApp()
 }
