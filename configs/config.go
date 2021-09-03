@@ -6,26 +6,27 @@ import (
 	"os"
 )
 
-type Configuration struct {
+type configuration struct {
 	DBUSER    string
 	DBPASS    string
 	DBHOST    string
 	DBPORT    string
 	DBNAME    string
 	LOGLEVEL  string
+	LOGOUTPUT string
 	SECRETKEY string
 }
 
 var (
-	Config *Configuration
+	Config *configuration
 )
 
-func SetupConfiguration() {
+func Init() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("File .env tidak ditemukan")
 	}
 
-	Config = new(Configuration)
+	Config = new(configuration)
 
 	Config.DBUSER = os.Getenv("BA_DB_USER")
 	Config.DBPASS = os.Getenv("BA_DB_PASS")
@@ -33,5 +34,6 @@ func SetupConfiguration() {
 	Config.DBPORT = os.Getenv("BA_DB_PORT")
 	Config.DBNAME = os.Getenv("BA_DB_NAME")
 	Config.LOGLEVEL = os.Getenv("BA_LOG_LEVEL")
+	Config.LOGLEVEL = os.Getenv("BA_LOG_OUTPUT")
 	Config.SECRETKEY = os.Getenv("BA_SECRET_KEY")
 }
