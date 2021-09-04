@@ -14,8 +14,7 @@ type BcryptAssumer interface {
 	IsPWAndHashPWMatch(password string, hashPass string) bool
 }
 
-type cryptoObj struct {
-}
+type cryptoObj struct{}
 
 // GenerateHash membuat hashpassword, hash password 1 dengan yang lainnya akan berbeda meskipun
 // inputannya sama, sehingga untuk membandingkan hashpassword memerlukan method lain IsPWAndHashPWMatch

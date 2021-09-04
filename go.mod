@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/gofiber/fiber/v2 v2.18.0
+	github.com/golang-jwt/jwt/v4 v4.0.0 // indirect
 	github.com/jackc/pgconn v1.10.0
 	github.com/jackc/pgerrcode v0.0.0-20201024163028-a0d42d470451
 	github.com/jackc/pgx/v4 v4.13.0
