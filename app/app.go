@@ -16,6 +16,7 @@ func RunApp(){
 	configs.Init()
 	logger.Init()
 	db.Init()
+	defer db.Close()
 
 	// membuat fiber app
 	app := fiber.New()
@@ -37,7 +38,6 @@ func RunApp(){
 		log.Panic()
 	}
 
-	// cleanup app, seperti menutup koneksi database dll
+	// cleanup app
 	fmt.Println("Running cleanup tasks...")
-	db.Close()
 }
