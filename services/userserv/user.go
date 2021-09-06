@@ -28,7 +28,6 @@ type UserServiceAssumer interface {
 	Login(login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError)
 	InsertUser(user dto.User) (int, rest_err.APIError)
 	EditUser(request dto.User) (*dto.User, rest_err.APIError)
-	ChangeRole(userID int, role []int) (*dto.User, rest_err.APIError)
 	Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError)
 	DeleteUser(userID int) rest_err.APIError
 	GetUser(userID int) (*dto.User, rest_err.APIError)
@@ -49,7 +48,7 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 	AccessClaims := mjwt.CustomClaim{
 		Identity:    user.ID,
 		Name:        string(user.Name),
-		Roles:       user.Role,
+		Roles:       user.Roles,
 		ExtraMinute: 60 * 24 * 1, // 1 Hour
 		Type:        mjwt.Access,
 		Fresh:       true,
@@ -58,7 +57,7 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 	RefreshClaims := mjwt.CustomClaim{
 		Identity:    user.ID,
 		Name:        string(user.Name),
-		Roles:       user.Role,
+		Roles:       user.Roles,
 		ExtraMinute: 60 * 24 * 10, // 60 days
 		Type:        mjwt.Refresh,
 	}
@@ -112,15 +111,6 @@ func (u *userService) EditUser(request dto.User) (*dto.User, rest_err.APIError) 
 	return result, nil
 }
 
-// ChangeRole
-func (u *userService) ChangeRole(userID int, role []int) (*dto.User, rest_err.APIError) {
-	result, err := u.dao.ChangeRole(userID, role)
-	if err != nil {
-		return nil, err
-	}
-	return result, nil
-}
-
 // Refresh token
 func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError) {
 	token, apiErr := u.jwt.ValidateToken(payload.RefreshToken)
@@ -146,7 +136,7 @@ func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRef
 	AccessClaims := mjwt.CustomClaim{
 		Identity:    user.ID,
 		Name:        string(user.Name),
-		Roles:       user.Role,
+		Roles:       user.Roles,
 		ExtraMinute: time.Duration(60 * 60 * 1),
 		Type:        mjwt.Access,
 		Fresh:       false,

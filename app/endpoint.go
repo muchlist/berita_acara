@@ -35,6 +35,5 @@ func prepareEndPoint(app *fiber.App) {
 	api.Post("/register-force", userHandler.Register)                               // <- seharusnya gunakan middleware agar hanya admin yang bisa meregistrasi
 	api.Post("/register", middle.NormalAuth(roles.RoleAdmin), userHandler.Register) // <- hanya admin yang bisa meregistrasi
 	api.Put("/users/:id", middle.NormalAuth(roles.RoleAdmin), userHandler.Edit)
-	api.Put("/users-role/:id", userHandler.ChangeRole)
 	api.Delete("/users/:id", middle.NormalAuth(roles.RoleAdmin), userHandler.Delete)
 }

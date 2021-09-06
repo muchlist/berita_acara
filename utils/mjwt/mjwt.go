@@ -91,7 +91,7 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 	if !ok {
 		return nil, rest_err.NewInternalServerError(mappingError, nil)
 	}
-	roles, err := iToSliceInt(claims[rolesKey])
+	roles, err := iToSliceString(claims[rolesKey])
 	if err != nil {
 		return nil, rest_err.NewInternalServerError(mappingError, err)
 	}
@@ -134,21 +134,21 @@ func (j *jwtUtils) ValidateToken(tokenString string) (*jwt.Token, rest_err.APIEr
 	return token, nil
 }
 
-func iToSliceInt(assumedSliceInterface interface{}) ([]int, error) {
+func iToSliceString(assumedSliceInterface interface{}) ([]string, error) {
 	sliceInterface, ok := assumedSliceInterface.([]interface{})
 	if !ok {
 		return nil, errors.New("type bukan slice interface")
 	}
-	sliceInt := make([]int, len(sliceInterface))
+	sliceString := make([]string, len(sliceInterface))
 	for i, v := range sliceInterface {
 		switch val := v.(type) {
-		case int:
-			sliceInt[i] = val
-		case float64:
-			sliceInt[i] = int(val)
+		case string:
+			sliceString[i] = val
+		case []byte:
+			sliceString[i] = string(val)
 		default:
 			return nil, errors.New("tidak dapat di cast ke int")
 		}
 	}
-	return sliceInt, nil
+	return sliceString, nil
 }

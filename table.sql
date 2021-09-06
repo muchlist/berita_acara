@@ -8,15 +8,14 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS roles(
-    id SERIAL PRIMARY KEY,
-    role_name VARCHAR (20) UNIQUE NOT NULL,
+    role_name VARCHAR (20) PRIMARY KEY,
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS permissions(
     id SERIAL PRIMARY KEY,
-    roles_id INT REFERENCES roles(id) ON DELETE CASCADE,
+    roles_name VARCHAR(20) REFERENCES roles(role_name) ON DELETE CASCADE,
     permission_name VARCHAR (20) UNIQUE NOT NULL,
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL
@@ -25,5 +24,5 @@ CREATE TABLE IF NOT EXISTS permissions(
 CREATE TABLE IF NOT EXISTS users_roles(
     id SERIAL PRIMARY KEY,
     users_id INT REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    roles_id INT REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE
+    roles_name VARCHAR (20) REFERENCES roles(role_name) ON DELETE CASCADE ON UPDATE CASCADE
 );

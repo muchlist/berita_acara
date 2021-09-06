@@ -60,7 +60,7 @@ func (u *UserHandler) Register(c *fiber.Ctx) error {
 		Email:     user.Email,
 		Name:      dto.UppercaseString(user.Name),
 		Password:  user.Password,
-		Role:      user.Role,
+		Roles:     user.Roles,
 		CreatedAt: time.Now().Unix(),
 		UpdatedAt: time.Now().Unix(),
 	})
@@ -90,33 +90,6 @@ func (u *UserHandler) Edit(c *fiber.Ctx) error {
 	}
 
 	userEdited, apiErr := u.service.EditUser(user)
-	if apiErr != nil {
-		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
-	}
-
-	return c.JSON(fiber.Map{"error": nil, "data": userEdited})
-}
-
-// ChangeRole mengedit user
-func (u *UserHandler) ChangeRole(c *fiber.Ctx) error {
-	userIDstr := c.Params("id")
-	userID, err := strconv.Atoi(userIDstr)
-	if err != nil {
-		apiErr := rest_err.NewBadRequestError("kesalahan input, id harus berupa angka")
-		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
-	}
-
-	type roleChange struct {
-		Role []int `json:"role"`
-	}
-
-	var role roleChange
-	if err := c.BodyParser(&role); err != nil {
-		apiErr := rest_err.NewBadRequestError(err.Error())
-		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
-	}
-
-	userEdited, apiErr := u.service.ChangeRole(userID, role.Role)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -165,7 +138,7 @@ func (u *UserHandler) Delete(c *fiber.Ctx) error {
 
 // Get menampilkan user berdasarkan username
 func (u *UserHandler) Get(c *fiber.Ctx) error {
-	userID := c.Params("user_id")
+	userID := c.Params("id")
 
 	userIDInt, err := strconv.Atoi(userID)
 	if err != nil {
