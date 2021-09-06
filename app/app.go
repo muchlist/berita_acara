@@ -6,17 +6,19 @@ import (
 	"github.com/muchlist/berita_acara/configs"
 	"github.com/muchlist/berita_acara/db"
 	"github.com/muchlist/berita_acara/utils/logger"
+	"github.com/muchlist/berita_acara/utils/mjwt"
 	"log"
 	"os"
 	"os/signal"
 )
 
-func RunApp(){
+func RunApp() {
 	// Init config, logger dan db
 	configs.Init()
 	logger.Init()
 	db.Init()
 	defer db.Close()
+	mjwt.Init()
 
 	// membuat fiber app
 	app := fiber.New()
@@ -30,7 +32,7 @@ func RunApp(){
 		_ = app.Shutdown()
 	}()
 
-	// ...
+	prepareEndPoint(app)
 
 	// blocking and listen for fiber
 	if err := app.Listen(":3500"); err != nil {

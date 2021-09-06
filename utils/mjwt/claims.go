@@ -11,11 +11,11 @@ const (
 )
 
 type CustomClaim struct {
-	Identity    string
+	Identity    int
 	Name        string
 	Exp         int64
 	ExtraMinute time.Duration
 	Type        int
 	Fresh       bool
-	Roles       string
+	Roles       []int
 }

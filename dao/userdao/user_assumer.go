@@ -11,13 +11,14 @@ type UserDaoAssumer interface {
 }
 
 type UserSaver interface {
-	Insert(user dto.User) (*string, rest_err.APIError)
+	Insert(user dto.User) (int, rest_err.APIError)
 	Edit(userInput dto.User) (*dto.User, rest_err.APIError)
-	Delete(userName string) rest_err.APIError
+	ChangeRole(userID int, role []int) (*dto.User, rest_err.APIError)
+	Delete(id int) rest_err.APIError
 	ChangePassword(input dto.User) (*dto.User, rest_err.APIError)
 }
 
 type UserReader interface {
-	Get(userName string) (*dto.User, rest_err.APIError)
+	Get(id int) (*dto.User, rest_err.APIError)
 	Find() ([]dto.User, rest_err.APIError)
 }

@@ -1,6 +1,5 @@
 package sql_err
 
-
 import (
 	"errors"
 	"fmt"
@@ -19,7 +18,9 @@ func ParseError(err error) rest_err.APIError {
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
 		case pgerrcode.UniqueViolation:
-			return rest_err.NewBadRequestError("input yang diberikan mengalami konflik dengan data existing")
+			return rest_err.NewBadRequestError("input mengalami konflik dengan data existing")
+		case pgerrcode.ForeignKeyViolation:
+			return rest_err.NewBadRequestError("parent id tidak ditemukan")
 		case pgerrcode.UndefinedColumn:
 			return rest_err.NewInternalServerError("galat pada query database, column tidak tersedia", err)
 		}

@@ -1,6 +1,7 @@
 package mjwt
 
 import (
+	"errors"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/muchlist/berita_acara/configs"
 	"github.com/muchlist/berita_acara/utils/rest_err"
@@ -78,7 +79,7 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 		return nil, rest_err.NewInternalServerError("gagal mapping token", nil)
 	}
 
-	identity, ok := claims[identityKey].(string)
+	identity, ok := claims[identityKey].(float64)
 	if !ok {
 		return nil, rest_err.NewInternalServerError(mappingError, nil)
 	}
@@ -90,9 +91,9 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 	if !ok {
 		return nil, rest_err.NewInternalServerError(mappingError, nil)
 	}
-	roles, ok := claims[rolesKey].(string)
-	if !ok {
-		return nil, rest_err.NewInternalServerError(mappingError, nil)
+	roles, err := iToSliceInt(claims[rolesKey])
+	if err != nil {
+		return nil, rest_err.NewInternalServerError(mappingError, err)
 	}
 	tokenType, ok := claims[tokenTypeKey].(float64)
 	if !ok {
@@ -104,7 +105,7 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 	}
 
 	customClaim := CustomClaim{
-		Identity: identity,
+		Identity: int(identity),
 		Name:     name,
 		Exp:      int64(exp),
 		Roles:    roles,
@@ -131,4 +132,23 @@ func (j *jwtUtils) ValidateToken(tokenString string) (*jwt.Token, rest_err.APIEr
 	}
 
 	return token, nil
+}
+
+func iToSliceInt(assumedSliceInterface interface{}) ([]int, error) {
+	sliceInterface, ok := assumedSliceInterface.([]interface{})
+	if !ok {
+		return nil, errors.New("type bukan slice interface")
+	}
+	sliceInt := make([]int, len(sliceInterface))
+	for i, v := range sliceInterface {
+		switch val := v.(type) {
+		case int:
+			sliceInt[i] = val
+		case float64:
+			sliceInt[i] = int(val)
+		default:
+			return nil, errors.New("tidak dapat di cast ke int")
+		}
+	}
+	return sliceInt, nil
 }
