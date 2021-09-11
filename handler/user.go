@@ -56,7 +56,7 @@ func (u *UserHandler) Register(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
 
-	insertUserID, apiErr := u.service.InsertUser(dto.User{
+	insertUserID, apiErr := u.service.InsertUser(c.Context(), dto.User{
 		ID:        user.ID,
 		Email:     user.Email,
 		Name:      dto.UppercaseString(user.Name),
@@ -90,7 +90,7 @@ func (u *UserHandler) Edit(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
 
-	userEdited, apiErr := u.service.EditUser(user)
+	userEdited, apiErr := u.service.EditUser(c.Context(), user)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -106,7 +106,7 @@ func (u *UserHandler) RefreshToken(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
 
-	response, apiErr := u.service.Refresh(payload)
+	response, apiErr := u.service.Refresh(c.Context(), payload)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -129,7 +129,7 @@ func (u *UserHandler) Delete(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
 
-	apiErr := u.service.DeleteUser(userIDInt)
+	apiErr := u.service.DeleteUser(c.Context(), userIDInt)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -146,7 +146,7 @@ func (u *UserHandler) Get(c *fiber.Ctx) error {
 		apiErr := rest_err.NewBadRequestError("kesalahan input, id harus berupa angka")
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
-	user, apiErr := u.service.GetUser(userIDInt)
+	user, apiErr := u.service.GetUser(c.Context(), userIDInt)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -158,7 +158,7 @@ func (u *UserHandler) Get(c *fiber.Ctx) error {
 func (u *UserHandler) GetProfile(c *fiber.Ctx) error {
 	claims := c.Locals(mjwt.CLAIMS).(*mjwt.CustomClaim)
 
-	user, apiErr := u.service.GetUser(claims.Identity)
+	user, apiErr := u.service.GetUser(c.Context(), claims.Identity)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
@@ -172,7 +172,7 @@ func (u *UserHandler) Find(c *fiber.Ctx) error {
 	cursor := sfunc.StrToInt(c.Query("last_id"), 0)
 	search := c.Query("search")
 
-	userList, apiErr := u.service.FindUsers(search, limit, cursor)
+	userList, apiErr := u.service.FindUsers(c.Context(), search, limit, cursor)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
