@@ -19,5 +19,5 @@ type UserSaver interface {
 
 type UserReader interface {
 	Get(id int) (*dto.User, rest_err.APIError)
-	Find() ([]dto.User, rest_err.APIError)
+	FindWithCursor(search string, limit uint64, cursor int) ([]dto.User, rest_err.APIError)
 }

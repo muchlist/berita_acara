@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/muchlist/berita_acara/utils/mjwt"
 	"github.com/muchlist/berita_acara/utils/rest_err"
+	"github.com/muchlist/berita_acara/utils/sfunc"
 	"strings"
 )
 
@@ -71,13 +72,15 @@ func authHaveRoleValidator(authHeader string, mustFresh bool, rolesAllowed []str
 		}
 	}
 
-	//if len(rolesAllowed) != 0 {
-	//	if sfunc.InSlice(claims.Roles, rolesAllowed) {
-	//		return claims, nil
-	//	}
-	//} else {
-	//	return claims, nil
-	//}
+	if len(rolesAllowed) != 0 {
+		for _, role := range claims.Roles {
+			if sfunc.InSlice(role, rolesAllowed) {
+				return claims, nil
+			}
+		}
+	} else {
+		return claims, nil
+	}
 
 	apiErr = rest_err.NewUnauthorizedError(fmt.Sprintf("Unauthorized, memerlukan hak akses %s", rolesAllowed))
 	return nil, apiErr

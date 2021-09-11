@@ -3,32 +3,30 @@ package userdao
 import (
 	"fmt"
 	"github.com/Masterminds/squirrel"
-	"github.com/muchlist/berita_acara/dao"
 	"testing"
 )
 
 func TestUserDao_Insert(t *testing.T) {
-	id := 2
+
+	search := "asdadad"
+	cursor := 0
+	limit := 0
+
 	sb := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
-	sqlStatement, args, err := sb.Select(
-		dao.B(keyRolesID),
-		dao.A(keyID),
-		dao.A(keyEmail),
-		dao.A(keyName),
-		dao.A(keyPassword),
-		dao.A(keyCreatedAt),
-		dao.A(keyUpdatedAt),
-		dao.C("role_name"),
-	).
-		Distinct().
-		From(keyUserTable + " A").
-		Join(keyUsersRolesTable + " B ON A.id = B.users_id").
-		Join("roles C ON C.id = B.roles_id").
-		Where(squirrel.Eq{
-			dao.A(keyID): id,
-		}).
+
+	sqlfrom := sb.Select(keyID, keyEmail, keyName, keyCreatedAt, keyUpdatedAt).
+		From(keyUserTable)
+
+	sqlfrom = sqlfrom.Where(squirrel.And{
+		squirrel.Gt{keyID: cursor},
+		squirrel.Like{"name": fmt.Sprint("%", search, "%")},
+	})
+
+	sqlStatement, args, err := sqlfrom.OrderBy(keyID + " ASC").
+		Limit(uint64(limit)).
 		ToSql()
+
 	fmt.Println(sqlStatement)
-	fmt.Printf("%v", args)
+	fmt.Printf("%v\n", args)
 	fmt.Println(err)
 }

@@ -28,12 +28,11 @@ func prepareEndPoint(app *fiber.App) {
 
 	//USER
 	api.Get("/users/:id", userHandler.Get)
-	api.Get("/users", userHandler.Find)
+	api.Get("/users", middle.NormalAuth(), userHandler.Find)
 	api.Post("/login", userHandler.Login)
 	api.Post("/refresh", userHandler.RefreshToken)
 	api.Get("/profile", middle.NormalAuth(), userHandler.GetProfile)
-	api.Post("/register-force", userHandler.Register)                               // <- seharusnya gunakan middleware agar hanya admin yang bisa meregistrasi
-	api.Post("/register", middle.NormalAuth(roles.RoleAdmin), userHandler.Register) // <- hanya admin yang bisa meregistrasi
+	api.Post("/register", middle.NormalAuth(roles.RoleAdmin), userHandler.Register)
 	api.Put("/users/:id", middle.NormalAuth(roles.RoleAdmin), userHandler.Edit)
 	api.Delete("/users/:id", middle.NormalAuth(roles.RoleAdmin), userHandler.Delete)
 }

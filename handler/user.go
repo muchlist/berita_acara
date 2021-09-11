@@ -7,6 +7,7 @@ import (
 	"github.com/muchlist/berita_acara/services/userserv"
 	"github.com/muchlist/berita_acara/utils/mjwt"
 	"github.com/muchlist/berita_acara/utils/rest_err"
+	"github.com/muchlist/berita_acara/utils/sfunc"
 	"strconv"
 	"time"
 )
@@ -167,7 +168,11 @@ func (u *UserHandler) GetProfile(c *fiber.Ctx) error {
 
 // Find menampilkan list user
 func (u *UserHandler) Find(c *fiber.Ctx) error {
-	userList, apiErr := u.service.FindUsers()
+	limit := sfunc.StrToInt(c.Query("limit"), 10)
+	cursor := sfunc.StrToInt(c.Query("last_id"), 0)
+	search := c.Query("search")
+
+	userList, apiErr := u.service.FindUsers(search, limit, cursor)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}

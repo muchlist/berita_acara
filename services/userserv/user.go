@@ -7,6 +7,7 @@ import (
 	"github.com/muchlist/berita_acara/utils/mjwt"
 	"github.com/muchlist/berita_acara/utils/rest_err"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -22,16 +23,6 @@ type userService struct {
 	dao    userdao.UserDaoAssumer
 	crypto mcrypt.BcryptAssumer
 	jwt    mjwt.JWTAssumer
-}
-
-type UserServiceAssumer interface {
-	Login(login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError)
-	InsertUser(user dto.User) (int, rest_err.APIError)
-	EditUser(request dto.User) (*dto.User, rest_err.APIError)
-	Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError)
-	DeleteUser(userID int) rest_err.APIError
-	GetUser(userID int) (*dto.User, rest_err.APIError)
-	FindUsers() ([]dto.User, rest_err.APIError)
 }
 
 // Login
@@ -75,6 +66,7 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 		ID:           user.ID,
 		Email:        user.Email,
 		Name:         string(user.Name),
+		Roles:        user.Roles,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		Expired:      time.Now().Add(time.Minute * time.Duration(60*24*1)).Unix(),
@@ -174,8 +166,8 @@ func (u *userService) GetUser(userID int) (*dto.User, rest_err.APIError) {
 }
 
 // FindUsers
-func (u *userService) FindUsers() ([]dto.User, rest_err.APIError) {
-	userList, err := u.dao.Find()
+func (u *userService) FindUsers(search string, limit int, cursor int) ([]dto.User, rest_err.APIError) {
+	userList, err := u.dao.FindWithCursor(strings.ToUpper(search), uint64(limit), cursor)
 	if err != nil {
 		return nil, err
 	}
