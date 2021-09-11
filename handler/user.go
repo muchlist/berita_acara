@@ -35,7 +35,7 @@ func (u *UserHandler) Login(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}
 
-	response, apiErr := u.service.Login(login)
+	response, apiErr := u.service.Login(c.Context(), login)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(fiber.Map{"error": apiErr, "data": nil})
 	}

@@ -1,6 +1,7 @@
 package userserv
 
 import (
+	"context"
 	"github.com/muchlist/berita_acara/dto"
 	"github.com/muchlist/berita_acara/utils/rest_err"
 )
@@ -17,7 +18,7 @@ type UserServiceReader interface {
 }
 
 type UserServiceAccess interface {
-	Login(login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError)
+	Login(ctx context.Context, login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError)
 	Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError)
 }
 

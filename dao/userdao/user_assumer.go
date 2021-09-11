@@ -1,6 +1,7 @@
 package userdao
 
 import (
+	"context"
 	"github.com/muchlist/berita_acara/dto"
 	"github.com/muchlist/berita_acara/utils/rest_err"
 )
@@ -11,13 +12,13 @@ type UserDaoAssumer interface {
 }
 
 type UserSaver interface {
-	Insert(user dto.User) (int, rest_err.APIError)
-	Edit(userInput dto.User) (*dto.User, rest_err.APIError)
-	Delete(id int) rest_err.APIError
-	ChangePassword(input dto.User) rest_err.APIError
+	Insert(ctx context.Context, user dto.User) (int, rest_err.APIError)
+	Edit(ctx context.Context, userInput dto.User) (*dto.User, rest_err.APIError)
+	Delete(ctx context.Context, id int) rest_err.APIError
+	ChangePassword(ctx context.Context, input dto.User) rest_err.APIError
 }
 
 type UserReader interface {
-	Get(id int) (*dto.User, rest_err.APIError)
-	FindWithCursor(search string, limit uint64, cursor int) ([]dto.User, rest_err.APIError)
+	Get(ctx context.Context, id int) (*dto.User, rest_err.APIError)
+	FindWithCursor(ctx context.Context, search string, limit uint64, cursor int) ([]dto.User, rest_err.APIError)
 }

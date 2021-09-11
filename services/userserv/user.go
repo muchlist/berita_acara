@@ -1,6 +1,7 @@
 package userserv
 
 import (
+	"context"
 	"github.com/muchlist/berita_acara/dao/userdao"
 	"github.com/muchlist/berita_acara/dto"
 	"github.com/muchlist/berita_acara/utils/mcrypt"
@@ -26,7 +27,7 @@ type userService struct {
 }
 
 // Login
-func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError) {
+func (u *userService) Login(ctx context.Context, login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError) {
 	user, err := u.dao.Get(login.UserID)
 	if err != nil {
 		return nil, rest_err.NewBadRequestError("Username atau password tidak valid")

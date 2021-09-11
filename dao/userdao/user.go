@@ -12,7 +12,6 @@ import (
 	"github.com/muchlist/berita_acara/utils/logger"
 	"github.com/muchlist/berita_acara/utils/rest_err"
 	"github.com/muchlist/berita_acara/utils/sql_err"
-	"time"
 )
 
 const (
@@ -46,10 +45,7 @@ func New(db *pgxpool.Pool) UserDaoAssumer {
 	}
 }
 
-func (u *userDao) Insert(user dto.User) (int, rest_err.APIError) {
-	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
-	defer cancel()
-
+func (u *userDao) Insert(ctx context.Context, user dto.User) (int, rest_err.APIError) {
 	user.Prepare()
 	if len(user.Roles) == 0 {
 		return 0, rest_err.NewBadRequestError("role tidak boleh kosong")
@@ -104,9 +100,7 @@ func (u *userDao) Insert(user dto.User) (int, rest_err.APIError) {
 	return userID, nil
 }
 
-func (u *userDao) Edit(input dto.User) (*dto.User, rest_err.APIError) {
-	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
-	defer cancel()
+func (u *userDao) Edit(ctx context.Context, input dto.User) (*dto.User, rest_err.APIError) {
 
 	if len(input.Roles) == 0 {
 		return nil, rest_err.NewBadRequestError("role tidak boleh kosong")
@@ -184,7 +178,7 @@ func (u *userDao) Edit(input dto.User) (*dto.User, rest_err.APIError) {
 	return &user, nil
 }
 
-func (u *userDao) ChangePassword(input dto.User) rest_err.APIError {
+func (u *userDao) ChangePassword(ctx context.Context, input dto.User) rest_err.APIError {
 	sqlStatement, args, err := u.sb.Update(keyUserTable).
 		SetMap(squirrel.Eq{
 			keyPassword:  input.Password,
@@ -197,7 +191,7 @@ func (u *userDao) ChangePassword(input dto.User) rest_err.APIError {
 		return rest_err.NewInternalServerError(dao.ErrSqlBuilder, err)
 	}
 
-	res, err := db.DB.Exec(context.Background(), sqlStatement, args...)
+	res, err := db.DB.Exec(ctx, sqlStatement, args...)
 	if err != nil {
 		return sql_err.ParseError(err)
 	}
@@ -209,7 +203,7 @@ func (u *userDao) ChangePassword(input dto.User) rest_err.APIError {
 	return nil
 }
 
-func (u *userDao) Delete(id int) rest_err.APIError {
+func (u *userDao) Delete(ctx context.Context, id int) rest_err.APIError {
 	sqlStatement, args, err := u.sb.Delete(keyUserTable).
 		Where(keyID, id).
 		ToSql()
@@ -217,7 +211,7 @@ func (u *userDao) Delete(id int) rest_err.APIError {
 		return rest_err.NewInternalServerError("kesalahan pada sql builder", err)
 	}
 
-	res, err := db.DB.Exec(context.Background(), sqlStatement, args...)
+	res, err := db.DB.Exec(ctx, sqlStatement, args...)
 	if err != nil {
 		return rest_err.NewInternalServerError("gagal saat penghapusan user", err)
 	}
@@ -229,7 +223,7 @@ func (u *userDao) Delete(id int) rest_err.APIError {
 	return nil
 }
 
-func (u *userDao) Get(id int) (*dto.User, rest_err.APIError) {
+func (u *userDao) Get(ctx context.Context, id int) (*dto.User, rest_err.APIError) {
 	sqlStatement, args, err := u.sb.Select(
 		dao.B(keyRolesName),
 		dao.A(keyID),
@@ -251,7 +245,7 @@ func (u *userDao) Get(id int) (*dto.User, rest_err.APIError) {
 		return nil, rest_err.NewInternalServerError(dao.ErrSqlBuilder, err)
 	}
 
-	rows, err := db.DB.Query(context.Background(), sqlStatement, args...)
+	rows, err := db.DB.Query(ctx, sqlStatement, args...)
 	if err != nil {
 		return nil, rest_err.NewInternalServerError("gagal mendapatkan daftar user", err)
 	}
@@ -284,7 +278,7 @@ func (u *userDao) Get(id int) (*dto.User, rest_err.APIError) {
 }
 
 // FindWithCursor example : ?limit=10&cursor=last_id_from_previous_fetch
-func (u *userDao) FindWithCursor(search string, limit uint64, cursor int) ([]dto.User, rest_err.APIError) {
+func (u *userDao) FindWithCursor(ctx context.Context, search string, limit uint64, cursor int) ([]dto.User, rest_err.APIError) {
 
 	// ------------------------------------------------------------------------- find user
 	sqlfrom := u.sb.Select(keyID, keyEmail, keyName, keyCreatedAt, keyUpdatedAt).
@@ -309,7 +303,7 @@ func (u *userDao) FindWithCursor(search string, limit uint64, cursor int) ([]dto
 	if err != nil {
 		return nil, rest_err.NewInternalServerError("kesalahan pada sql builder", err)
 	}
-	rows, err := db.DB.Query(context.Background(), sqlStatement, args...)
+	rows, err := db.DB.Query(ctx, sqlStatement, args...)
 	if err != nil {
 		return nil, rest_err.NewInternalServerError("gagal mendapatkan daftar user", err)
 	}
@@ -336,69 +330,7 @@ func (u *userDao) FindWithCursor(search string, limit uint64, cursor int) ([]dto
 		idUsers[i] = u.ID
 	}
 
-	roleForUser, err2 := u.findRoleForUsers(idUsers)
-	if err != nil {
-		return nil, err2
-	}
-
-	for _, role := range roleForUser {
-		for i, u := range users {
-			if u.ID == role.userID {
-				users[i].Roles = append(users[i].Roles, role.roleName)
-				break
-			}
-		}
-	}
-	return users, nil
-}
-
-// Search example : ?limit=10&search=
-func (u *userDao) Search(limit uint64, search string) ([]dto.User, rest_err.APIError) {
-
-	// ------------------------------------------------------------------------- find user
-	selectQuery := u.sb.Select(keyID, keyEmail, keyName, keyCreatedAt, keyUpdatedAt).
-		From(keyUserTable)
-
-	if len(search) > 0 {
-		selectQuery = selectQuery.Where("name LIKE ?", fmt.Sprint("%", search, "%"))
-	}
-
-	sqlStatement, args, err := selectQuery.
-		OrderBy(keyID + " ASC").
-		Limit(limit).
-		ToSql()
-
-	if err != nil {
-		return nil, rest_err.NewInternalServerError("kesalahan pada sql builder", err)
-	}
-	rows, err := db.DB.Query(context.Background(), sqlStatement, args...)
-	if err != nil {
-		return nil, rest_err.NewInternalServerError("gagal mendapatkan daftar user", err)
-	}
-	defer rows.Close()
-
-	users := make([]dto.User, 0)
-	for rows.Next() {
-		user := dto.User{}
-		err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &user.UpdatedAt)
-		if err != nil {
-			return nil, sql_err.ParseError(err)
-		}
-		user.Roles = []string{}
-		users = append(users, user)
-	}
-
-	if len(users) == 0 {
-		return users, nil
-	}
-
-	// ------------------------------------------------------------------------- find role user
-	idUsers := make([]int, len(users))
-	for i, u := range users {
-		idUsers[i] = u.ID
-	}
-
-	roleForUser, err2 := u.findRoleForUsers(idUsers)
+	roleForUser, err2 := u.findRoleForUsers(ctx, idUsers)
 	if err != nil {
 		return nil, err2
 	}
@@ -421,13 +353,13 @@ type roleNameUserID struct {
 
 // findRoleForUsers
 // input list user id(int) untuk mendapatkan pasangan rolename dan iduser (roleNameUserID struct)
-func (u *userDao) findRoleForUsers(idUsers []int) ([]roleNameUserID, rest_err.APIError) {
+func (u *userDao) findRoleForUsers(ctx context.Context, idUsers []int) ([]roleNameUserID, rest_err.APIError) {
 	sqlStatement, args, err := u.sb.Select(keyRolesName, keyUsersID).
 		From(keyUsersRolesTable).
 		Where(squirrel.Eq{keyUsersID: idUsers}).
 		ToSql()
 
-	rows, err := db.DB.Query(context.Background(), sqlStatement, args...)
+	rows, err := db.DB.Query(ctx, sqlStatement, args...)
 	if err != nil {
 		return nil, rest_err.NewInternalServerError("gagal mendapatkan daftar role", err)
 	}
