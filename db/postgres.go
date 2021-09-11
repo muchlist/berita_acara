@@ -24,13 +24,13 @@ func Init() {
 	DB, err = pgxpool.Connect(context.Background(), databaseUrl)
 	if err != nil {
 		logger.Error("tidak dapat terhubung ke database", err)
-		panic(fmt.Sprintf("Unable to connect to database: %v\n", err))
+		panic("Unable to connect to database")
 	}
 
 	logger.Info("terkoneksi ke database")
 }
 
-func Close(){
+func Close() {
 	DB.Close()
 	logger.Info("koneksi ke database ditutup")
 }
