@@ -15,8 +15,6 @@ import (
 )
 
 const (
-	connectTimeout = 3
-
 	keyUserTable = "users"
 	keyID        = "id"
 	keyEmail     = "email"
@@ -205,7 +203,7 @@ func (u *userDao) ChangePassword(ctx context.Context, input dto.User) rest_err.A
 
 func (u *userDao) Delete(ctx context.Context, id int) rest_err.APIError {
 	sqlStatement, args, err := u.sb.Delete(keyUserTable).
-		Where(keyID, id).
+		Where(squirrel.Eq{keyID: id}).
 		ToSql()
 	if err != nil {
 		return rest_err.NewInternalServerError("kesalahan pada sql builder", err)

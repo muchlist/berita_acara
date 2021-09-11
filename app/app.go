@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/muchlist/berita_acara/configs"
 	"github.com/muchlist/berita_acara/db"
+	_ "github.com/muchlist/berita_acara/docs"
 	"github.com/muchlist/berita_acara/utils/logger"
 	"github.com/muchlist/berita_acara/utils/mjwt"
 	"log"
@@ -12,6 +13,16 @@ import (
 	"os/signal"
 )
 
+// @title Berita Acara API
+// @version 1.0
+// @description Berita acara api
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email fiber@swagger.io
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:3500
+// @BasePath /
 func RunApp() {
 	// Init config, logger dan db
 	configs.Init()
