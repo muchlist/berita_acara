@@ -13,12 +13,13 @@ import (
 	"os/signal"
 )
 
+// RunApp
 // @title Berita Acara API
 // @version 1.0
-// @description Berita acara api
+// @description Berita Acara Api
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
-// @contact.email fiber@swagger.io
+// @contact.email whois.muchlis@gmail.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:3500
