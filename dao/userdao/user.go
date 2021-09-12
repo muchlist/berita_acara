@@ -328,30 +328,24 @@ func (u *userDao) FindWithCursor(ctx context.Context, search string, limit uint6
 		idUsers[i] = u.ID
 	}
 
-	roleForUser, err2 := u.findRoleForUsers(ctx, idUsers)
+	roleUserMap, err2 := u.findRoleForUsers(ctx, idUsers)
 	if err != nil {
 		return nil, err2
 	}
 
-	for _, role := range roleForUser {
-		for i, u := range users {
-			if u.ID == role.userID {
-				users[i].Roles = append(users[i].Roles, role.roleName)
-				break
-			}
+	for i, user := range users {
+		roles, ok := roleUserMap[user.ID]
+		if ok {
+			users[i].Roles = roles
 		}
 	}
 	return users, nil
 }
 
-type roleNameUserID struct {
-	roleName string
-	userID   int
-}
 
 // findRoleForUsers
-// input list user id(int) untuk mendapatkan pasangan rolename dan iduser (roleNameUserID struct)
-func (u *userDao) findRoleForUsers(ctx context.Context, idUsers []int) ([]roleNameUserID, rest_err.APIError) {
+// input list user id(int) untuk mendapatkan pasangan rolename dan iduser dalam bentuk map
+func (u *userDao) findRoleForUsers(ctx context.Context, idUsers []int) (map[int][]string, rest_err.APIError) {
 	sqlStatement, args, err := u.sb.Select(keyRolesName, keyUsersID).
 		From(keyUsersRolesTable).
 		Where(squirrel.Eq{keyUsersID: idUsers}).
@@ -363,14 +357,22 @@ func (u *userDao) findRoleForUsers(ctx context.Context, idUsers []int) ([]roleNa
 	}
 	defer rows.Close()
 
-	roleNameList := make([]roleNameUserID, 0)
+	// key is userID and value is slice string role name
+	roleNameMap := make(map[int][]string)
 	for rows.Next() {
-		var r roleNameUserID
-		err := rows.Scan(&r.roleName, &r.userID)
+		var userID int
+		var roleName string
+		err := rows.Scan(&roleName, &userID)
 		if err != nil {
 			return nil, rest_err.NewInternalServerError("gagal saat parsing role", err)
 		}
-		roleNameList = append(roleNameList, r)
+		roles, ok := roleNameMap[userID]
+		if !ok {
+			roleNameMap[userID] = []string{roleName}
+		} else {
+			roleNameMap[userID] = append(roles, roleName)
+		}
 	}
-	return roleNameList, nil
+
+	return roleNameMap, nil
 }
