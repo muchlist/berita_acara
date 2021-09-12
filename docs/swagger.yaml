@@ -1,0 +1,547 @@
+basePath: /api/v1
+definitions:
+  dto.User:
+    properties:
+      created_at:
+        example: 1631341964
+        type: integer
+      email:
+        example: example@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: muchlis
+        type: string
+      roles:
+        example:
+        - ADMIN
+        - NORMAL
+        items:
+          type: string
+        type: array
+      updated_at:
+        example: 1631341964
+        type: integer
+    type: object
+  dto.UserEditRequest:
+    properties:
+      email:
+        example: example@example.com
+        type: string
+      name:
+        example: muchlis
+        type: string
+      roles:
+        example:
+        - ADMIN
+        - NORMAL
+        items:
+          type: string
+        type: array
+    type: object
+  dto.UserLoginRequest:
+    properties:
+      password:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dto.UserLoginResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1N.ywibmFtZSI6IkR5cGUiOjB9.aFjz4esDQ4-_K3dMUmo
+        type: string
+      email:
+        example: example@example.com
+        type: string
+      expired:
+        example: 1631341964
+        type: integer
+      id:
+        example: 1
+        type: integer
+      name:
+        example: muchlis
+        type: string
+      refresh_token:
+        example: eyJhbGciOiJIUzI1N.ywibmFtZSI6IkR5cGUiOjB9.aFjz4esDQ4-_K3dMUmo
+        type: string
+      roles:
+        example:
+        - ADMIN
+        - NORMAL
+        - BASIC
+        items:
+          type: string
+        type: array
+    type: object
+  dto.UserRefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJIUzI1N.ywibmFtZSI6IkR5cGUiOjB9.aFjz4esDQ4-_K3dMUmo
+        type: string
+    type: object
+  dto.UserRefreshTokenResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1N.ywibmFtZSI6IkR5cGUiOjB9.aFjz4esDQ4-_K3dMUmo
+        type: string
+      expired:
+        example: 1631341964
+        type: integer
+    type: object
+  dto.UserRegisterReq:
+    properties:
+      email:
+        example: example@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: muchlis
+        type: string
+      password:
+        example: password123
+        type: string
+      roles:
+        example:
+        - ADMIN
+        - NORMAL
+        - BASIC
+        items:
+          type: string
+        type: array
+    type: object
+  payload.ErrorExample400:
+    properties:
+      causes:
+        example:
+        - causes 1
+        - causes 2
+        items:
+          type: string
+        type: array
+      error:
+        example: unauthorized
+        type: string
+      message:
+        example: Unauthorized, memerlukan hak akses [ADMIN]
+        type: string
+      status:
+        example: 401
+        type: integer
+    type: object
+  payload.ErrorExample500:
+    properties:
+      causes:
+        example:
+        - 'ERROR: argument of WHERE must be type boolean. not type integer (SQLSTATE
+          42804)'
+        items:
+          type: string
+        type: array
+      error:
+        example: internal_server_error
+        type: string
+      message:
+        example: gagal saat penghapusan item
+        type: string
+      status:
+        example: 500
+        type: integer
+    type: object
+  payload.RespMsgExample:
+    properties:
+      data:
+        example: Data dengan ID xxx berhasil di [Create/Delete]
+        type: string
+        x-nullable: true
+      error:
+        type: object
+        x-nullable: true
+    type: object
+  payload.RespWrap:
+    properties:
+      data:
+        type: object
+        x-nullable: true
+      error:
+        type: object
+        x-nullable: true
+    type: object
+host: localhost:3500
+info:
+  contact:
+    email: whois.muchlis@gmail.com
+    name: API Support
+  description: Berita Acara Api
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Berita Acara API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login menggunakan userID dan password untuk mendapatkan JWT Token
+      operationId: user-login
+      parameters:
+      - description: Body raw JSON
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserLoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      summary: login
+      tags:
+      - Access
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: menampilkan profile berdasarkan user yang login saat ini
+      operationId: user-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: get current profile
+      tags:
+      - Access
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: mendapatkan token dengan tambahan waktu expired menggunakan refresh
+        token
+      operationId: user-refresh
+      parameters:
+      - description: Body raw JSON
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserRefreshTokenResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      summary: refresh token
+      tags:
+      - Access
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: menampilkan daftar user
+      operationId: user-find
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Last ID sebagai cursor untuk page selanjutnya
+        in: query
+        name: last_id
+        type: integer
+      - description: Search apabila di isi akan melakukan pencarian string include
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.User'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: find user
+      tags:
+      - Access
+    post:
+      consumes:
+      - application/json
+      description: added user to repository
+      operationId: user-register
+      parameters:
+      - description: Body raw JSON
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserRegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payload.RespMsgExample'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: register user
+      tags:
+      - Access
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: menghapus user berdasarkan userID
+      operationId: user-delete
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payload.RespMsgExample'
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: delete user by ID
+      tags:
+      - Access
+    get:
+      consumes:
+      - application/json
+      description: menampilkan user berdasarkan userID
+      operationId: user-get
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: get user by ID
+      tags:
+      - Access
+    put:
+      consumes:
+      - application/json
+      description: melakukan perubahan data pada user
+      operationId: user-edit
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Body raw JSON
+        in: body
+        name: ReqBody
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserEditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample400'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/payload.RespWrap'
+            - properties:
+                error:
+                  $ref: '#/definitions/payload.ErrorExample500'
+              type: object
+      security:
+      - bearerAuth: []
+      summary: edit user
+      tags:
+      - Access
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,6 +1,7 @@
 package userserv
 
 import (
+	"context"
 	"github.com/muchlist/berita_acara/dao/userdao"
 	"github.com/muchlist/berita_acara/dto"
 	"github.com/muchlist/berita_acara/utils/mcrypt"
@@ -26,8 +27,8 @@ type userService struct {
 }
 
 // Login
-func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError) {
-	user, err := u.dao.Get(login.UserID)
+func (u *userService) Login(ctx context.Context, login dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError) {
+	user, err := u.dao.Get(ctx, login.UserID)
 	if err != nil {
 		return nil, rest_err.NewBadRequestError("Username atau password tidak valid")
 	}
@@ -76,7 +77,7 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 }
 
 // InsertUser melakukan register user
-func (u *userService) InsertUser(user dto.User) (int, rest_err.APIError) {
+func (u *userService) InsertUser(ctx context.Context, user dto.User) (int, rest_err.APIError) {
 	hashPassword, err := u.crypto.GenerateHash(user.Password)
 	if err != nil {
 		return 0, err
@@ -86,7 +87,7 @@ func (u *userService) InsertUser(user dto.User) (int, rest_err.APIError) {
 	user.CreatedAt = time.Now().Unix()
 	user.UpdatedAt = time.Now().Unix()
 
-	insertedUserID, err := u.dao.Insert(user)
+	insertedUserID, err := u.dao.Insert(ctx, user)
 	if err != nil {
 		return 0, err
 	}
@@ -94,9 +95,9 @@ func (u *userService) InsertUser(user dto.User) (int, rest_err.APIError) {
 }
 
 // EditUser
-func (u *userService) EditUser(request dto.User) (*dto.User, rest_err.APIError) {
+func (u *userService) EditUser(ctx context.Context, request dto.User) (*dto.User, rest_err.APIError) {
 	request.UpdatedAt = time.Now().Unix()
-	result, err := u.dao.Edit(request)
+	result, err := u.dao.Edit(ctx, request)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +105,7 @@ func (u *userService) EditUser(request dto.User) (*dto.User, rest_err.APIError) 
 }
 
 // Refresh token
-func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError) {
+func (u *userService) Refresh(ctx context.Context, payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError) {
 	token, apiErr := u.jwt.ValidateToken(payload.RefreshToken)
 	if apiErr != nil {
 		return nil, apiErr
@@ -120,7 +121,7 @@ func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRef
 	}
 
 	// mendapatkan data terbaru dari user
-	user, apiErr := u.dao.Get(claims.Identity)
+	user, apiErr := u.dao.Get(ctx, claims.Identity)
 	if apiErr != nil {
 		return nil, apiErr
 	}
@@ -148,8 +149,8 @@ func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRef
 }
 
 // DeleteUser
-func (u *userService) DeleteUser(userID int) rest_err.APIError {
-	err := u.dao.Delete(userID)
+func (u *userService) DeleteUser(ctx context.Context, userID int) rest_err.APIError {
+	err := u.dao.Delete(ctx, userID)
 	if err != nil {
 		return err
 	}
@@ -157,8 +158,8 @@ func (u *userService) DeleteUser(userID int) rest_err.APIError {
 }
 
 // GetUser mendapatkan user dari database
-func (u *userService) GetUser(userID int) (*dto.User, rest_err.APIError) {
-	user, err := u.dao.Get(userID)
+func (u *userService) GetUser(ctx context.Context, userID int) (*dto.User, rest_err.APIError) {
+	user, err := u.dao.Get(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -166,8 +167,8 @@ func (u *userService) GetUser(userID int) (*dto.User, rest_err.APIError) {
 }
 
 // FindUsers
-func (u *userService) FindUsers(search string, limit int, cursor int) ([]dto.User, rest_err.APIError) {
-	userList, err := u.dao.FindWithCursor(strings.ToUpper(search), uint64(limit), cursor)
+func (u *userService) FindUsers(ctx context.Context, search string, limit int, cursor int) ([]dto.User, rest_err.APIError) {
+	userList, err := u.dao.FindWithCursor(ctx, strings.ToUpper(search), uint64(limit), cursor)
 	if err != nil {
 		return nil, err
 	}
