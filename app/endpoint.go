@@ -3,6 +3,8 @@ package app
 import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/muchlist/berita_acara/configs/roles"
 	"github.com/muchlist/berita_acara/dao/userdao"
 	"github.com/muchlist/berita_acara/db"
@@ -23,6 +25,12 @@ func prepareEndPoint(app *fiber.App) {
 	userDao := userdao.New(db.DB)
 	userService := userserv.NewUserService(userDao, cryptoUtils, jwt)
 	userHandler := handler.NewUserHandler(userService)
+
+	app.Use(logger.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Content-Type, Accept, Authorization",
+	}))
 
 	app.Get("/swagger/*", swagger.Handler) // default
 

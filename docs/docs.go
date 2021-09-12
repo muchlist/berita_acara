@@ -31,7 +31,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/login": {
+        "/login": {
             "post": {
                 "description": "login menggunakan userID dan password untuk mendapatkan JWT Token",
                 "consumes": [
@@ -114,11 +114,11 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/profile": {
+        "/profile": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan profile berdasarkan user yang login saat ini",
@@ -155,7 +155,7 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/refresh": {
+        "/refresh": {
             "post": {
                 "description": "mendapatkan token dengan tambahan waktu expired menggunakan refresh token",
                 "consumes": [
@@ -238,11 +238,11 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/users": {
+        "/users": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan daftar user",
@@ -340,7 +340,7 @@ var doc = `{
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "added user to repository",
@@ -412,11 +412,11 @@ var doc = `{
                 }
             }
         },
-        "/api/v1/users/{id}": {
+        "/users/{id}": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan user berdasarkan userID",
@@ -500,7 +500,7 @@ var doc = `{
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "melakukan perubahan data pada user",
@@ -593,7 +593,7 @@ var doc = `{
             "delete": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menghapus user berdasarkan userID",

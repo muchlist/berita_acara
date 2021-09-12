@@ -185,7 +185,7 @@ info:
   title: Berita Acara API
   version: "1.0"
 paths:
-  /api/v1/login:
+  /login:
     post:
       consumes:
       - application/json
@@ -231,7 +231,7 @@ paths:
       summary: login
       tags:
       - Access
-  /api/v1/profile:
+  /profile:
     get:
       consumes:
       - application/json
@@ -250,11 +250,11 @@ paths:
                   $ref: '#/definitions/dto.User'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: get current profile
       tags:
       - Access
-  /api/v1/refresh:
+  /refresh:
     post:
       consumes:
       - application/json
@@ -301,7 +301,7 @@ paths:
       summary: refresh token
       tags:
       - Access
-  /api/v1/users:
+  /users:
     get:
       consumes:
       - application/json
@@ -353,7 +353,7 @@ paths:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: find user
       tags:
       - Access
@@ -395,11 +395,11 @@ paths:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: register user
       tags:
       - Access
-  /api/v1/users/{id}:
+  /users/{id}:
     delete:
       consumes:
       - application/json
@@ -437,7 +437,7 @@ paths:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: delete user by ID
       tags:
       - Access
@@ -483,7 +483,7 @@ paths:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: get user by ID
       tags:
       - Access
@@ -535,7 +535,7 @@ paths:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
       security:
-      - BearerAuth: []
+      - bearerAuth: []
       summary: edit user
       tags:
       - Access

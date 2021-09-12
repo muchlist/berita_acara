@@ -34,7 +34,7 @@ type UserHandler struct {
 // @Success 200 {object} payload.RespWrap{data=dto.UserLoginResponse}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/login [post]
+// @Router /login [post]
 func (u *UserHandler) Login(c *fiber.Ctx) error {
 	var login dto.UserLoginRequest
 	if err := c.BodyParser(&login); err != nil {
@@ -62,12 +62,12 @@ func (u *UserHandler) Login(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Param ReqBody body dto.UserRegisterReq true "Body raw JSON"
 // @Success 200 {object} payload.RespMsgExample
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/users [post]
+// @Router /users [post]
 func (u *UserHandler) Register(c *fiber.Ctx) error {
 	var user dto.UserRegisterReq
 	if err := c.BodyParser(&user); err != nil {
@@ -104,13 +104,13 @@ func (u *UserHandler) Register(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Param id path int true "User ID"
 // @Param ReqBody body dto.UserEditRequest true "Body raw JSON"
 // @Success 200 {object} payload.RespWrap{data=dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/users/{id} [put]
+// @Router /users/{id} [put]
 func (u *UserHandler) Edit(c *fiber.Ctx) error {
 	userID := c.Params("id")
 
@@ -151,7 +151,7 @@ func (u *UserHandler) Edit(c *fiber.Ctx) error {
 // @Success 200 {object} payload.RespWrap{data=dto.UserRefreshTokenResponse}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/refresh [post]
+// @Router /refresh [post]
 func (u *UserHandler) RefreshToken(c *fiber.Ctx) error {
 	var req dto.UserRefreshTokenRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -174,12 +174,12 @@ func (u *UserHandler) RefreshToken(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Param id path int true "User ID"
 // @Success 200 {object} payload.RespMsgExample
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/users/{id} [delete]
+// @Router /users/{id} [delete]
 func (u *UserHandler) Delete(c *fiber.Ctx) error {
 	claims := c.Locals(mjwt.CLAIMS).(*mjwt.CustomClaim)
 	userID := c.Params("id")
@@ -209,12 +209,12 @@ func (u *UserHandler) Delete(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Param id path int true "User ID"
 // @Success 200 {object} payload.RespWrap{data=dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/users/{id} [get]
+// @Router /users/{id} [get]
 func (u *UserHandler) Get(c *fiber.Ctx) error {
 	userID := c.Params("id")
 
@@ -241,9 +241,9 @@ func (u *UserHandler) Get(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Success 200 {object} payload.RespWrap{data=dto.User}
-// @Router /api/v1/profile [get]
+// @Router /profile [get]
 func (u *UserHandler) GetProfile(c *fiber.Ctx) error {
 	claims := c.Locals(mjwt.CLAIMS).(*mjwt.CustomClaim)
 
@@ -262,14 +262,14 @@ func (u *UserHandler) GetProfile(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Security BearerAuth
+// @Security bearerAuth
 // @Param limit query int false "Limit"
 // @Param last_id query int false "Last ID sebagai cursor untuk page selanjutnya"
 // @Param search query string false "Search apabila di isi akan melakukan pencarian string include"
 // @Success 200 {object} payload.RespWrap{data=[]dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
-// @Router /api/v1/users [get]
+// @Router /users [get]
 func (u *UserHandler) Find(c *fiber.Ctx) error {
 	limit := sfunc.StrToInt(c.Query("limit"), 10)
 	cursor := sfunc.StrToInt(c.Query("last_id"), 0)

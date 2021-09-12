@@ -17,7 +17,7 @@
     "host": "localhost:3500",
     "basePath": "/api/v1",
     "paths": {
-        "/api/v1/login": {
+        "/login": {
             "post": {
                 "description": "login menggunakan userID dan password untuk mendapatkan JWT Token",
                 "consumes": [
@@ -100,11 +100,11 @@
                 }
             }
         },
-        "/api/v1/profile": {
+        "/profile": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan profile berdasarkan user yang login saat ini",
@@ -141,7 +141,7 @@
                 }
             }
         },
-        "/api/v1/refresh": {
+        "/refresh": {
             "post": {
                 "description": "mendapatkan token dengan tambahan waktu expired menggunakan refresh token",
                 "consumes": [
@@ -224,11 +224,11 @@
                 }
             }
         },
-        "/api/v1/users": {
+        "/users": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan daftar user",
@@ -326,7 +326,7 @@
             "post": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "added user to repository",
@@ -398,11 +398,11 @@
                 }
             }
         },
-        "/api/v1/users/{id}": {
+        "/users/{id}": {
             "get": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menampilkan user berdasarkan userID",
@@ -486,7 +486,7 @@
             "put": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "melakukan perubahan data pada user",
@@ -579,7 +579,7 @@
             "delete": {
                 "security": [
                     {
-                        "BearerAuth": []
+                        "bearerAuth": []
                     }
                 ],
                 "description": "menghapus user berdasarkan userID",
