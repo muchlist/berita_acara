@@ -20,7 +20,7 @@ var doc = `{
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
-            "email": "fiber@swagger.io"
+            "email": "whois.muchlis@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -33,11 +33,6 @@ var doc = `{
     "paths": {
         "/api/v1/login": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "login menggunakan userID dan password untuk mendapatkan JWT Token",
                 "consumes": [
                     "application/json"
@@ -162,11 +157,6 @@ var doc = `{
         },
         "/api/v1/refresh": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "mendapatkan token dengan tambahan waktu expired menggunakan refresh token",
                 "consumes": [
                     "application/json"
@@ -918,6 +908,13 @@ var doc = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -934,10 +931,10 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "localhost:3500",
-	BasePath:    "/",
+	BasePath:    "/api/v1",
 	Schemes:     []string{},
 	Title:       "Berita Acara API",
-	Description: "Berita acara api",
+	Description: "Berita Acara Api",
 }
 
 type s struct{}

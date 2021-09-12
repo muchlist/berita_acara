@@ -31,7 +31,6 @@ type UserHandler struct {
 // @Produce json
 // @Tags Access
 // @Param ReqBody body dto.UserLoginRequest true "Body raw JSON"
-// @Security BearerAuth
 // @Success 200 {object} payload.RespWrap{data=dto.UserLoginResponse}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -63,8 +62,8 @@ func (u *UserHandler) Login(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Param ReqBody body dto.UserRegisterReq true "Body raw JSON"
 // @Security BearerAuth
+// @Param ReqBody body dto.UserRegisterReq true "Body raw JSON"
 // @Success 200 {object} payload.RespMsgExample
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -105,9 +104,9 @@ func (u *UserHandler) Register(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
+// @Security BearerAuth
 // @Param id path int true "User ID"
 // @Param ReqBody body dto.UserEditRequest true "Body raw JSON"
-// @Security BearerAuth
 // @Success 200 {object} payload.RespWrap{data=dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -149,7 +148,6 @@ func (u *UserHandler) Edit(c *fiber.Ctx) error {
 // @Produce json
 // @Tags Access
 // @Param ReqBody body dto.UserRefreshTokenRequest true "Body raw JSON"
-// @Security BearerAuth
 // @Success 200 {object} payload.RespWrap{data=dto.UserRefreshTokenResponse}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -176,8 +174,8 @@ func (u *UserHandler) RefreshToken(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Param id path int true "User ID"
 // @Security BearerAuth
+// @Param id path int true "User ID"
 // @Success 200 {object} payload.RespMsgExample
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -211,8 +209,8 @@ func (u *UserHandler) Delete(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
-// @Param id path int true "User ID"
 // @Security BearerAuth
+// @Param id path int true "User ID"
 // @Success 200 {object} payload.RespWrap{data=dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}
@@ -264,10 +262,10 @@ func (u *UserHandler) GetProfile(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Tags Access
+// @Security BearerAuth
 // @Param limit query int false "Limit"
 // @Param last_id query int false "Last ID sebagai cursor untuk page selanjutnya"
 // @Param search query string false "Search apabila di isi akan melakukan pencarian string include"
-// @Security BearerAuth
 // @Success 200 {object} payload.RespWrap{data=[]dto.User}
 // @Failure 400 {object} payload.RespWrap{error=payload.ErrorExample400}
 // @Failure 500 {object} payload.RespWrap{error=payload.ErrorExample500}

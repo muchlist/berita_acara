@@ -1,4 +1,4 @@
-basePath: /
+basePath: /api/v1
 definitions:
   dto.User:
     properties:
@@ -175,9 +175,9 @@ definitions:
 host: localhost:3500
 info:
   contact:
-    email: fiber@swagger.io
+    email: whois.muchlis@gmail.com
     name: API Support
-  description: Berita acara api
+  description: Berita Acara Api
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -228,8 +228,6 @@ paths:
                 error:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
-      security:
-      - BearerAuth: []
       summary: login
       tags:
       - Access
@@ -300,8 +298,6 @@ paths:
                 error:
                   $ref: '#/definitions/payload.ErrorExample500'
               type: object
-      security:
-      - BearerAuth: []
       summary: refresh token
       tags:
       - Access
@@ -543,4 +539,9 @@ paths:
       summary: edit user
       tags:
       - Access
+securityDefinitions:
+  bearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

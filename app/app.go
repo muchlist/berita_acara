@@ -22,8 +22,11 @@ import (
 // @contact.email whois.muchlis@gmail.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @securityDefinitions.apikey bearerAuth
+// @in header
+// @name Authorization
 // @host localhost:3500
-// @BasePath /
+// @BasePath /api/v1
 func RunApp() {
 	// Init config, logger dan db
 	configs.Init()

@@ -1,12 +1,12 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Berita acara api",
+        "description": "Berita Acara Api",
         "title": "Berita Acara API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "API Support",
-            "email": "fiber@swagger.io"
+            "email": "whois.muchlis@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -15,15 +15,10 @@
         "version": "1.0"
     },
     "host": "localhost:3500",
-    "basePath": "/",
+    "basePath": "/api/v1",
     "paths": {
         "/api/v1/login": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "login menggunakan userID dan password untuk mendapatkan JWT Token",
                 "consumes": [
                     "application/json"
@@ -148,11 +143,6 @@
         },
         "/api/v1/refresh": {
             "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "mendapatkan token dengan tambahan waktu expired menggunakan refresh token",
                 "consumes": [
                     "application/json"
@@ -903,6 +893,13 @@
                     "x-nullable": true
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }
